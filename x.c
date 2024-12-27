@@ -1616,14 +1616,14 @@ xdrawmovingcursor(int elapsed, int lastcx, int lastcy, int cx, int cy) {
         { borderpx + lastcx * win.cw, borderpx + (lastcy+1) * win.ch - 1 }          /* bottom left */
     };
     XPoint new[4] = {
-        { borderpx + cx * win.cw, borderpx + (cy+1) * win.ch - 1 },           /* bottom left */
         { borderpx + cx * win.cw, borderpx + cy * win.ch },                   /* top left */
         { borderpx + (cx+1) * win.cw - 1, borderpx + cy * win.ch },           /* top right */
-        { borderpx + (cx+1) * win.cw - 1, borderpx + (cy+1) * win.ch - 1 }    /* bottom right */
+        { borderpx + (cx+1) * win.cw - 1, borderpx + (cy+1) * win.ch - 1 },   /* bottom right */
+        { borderpx + cx * win.cw, borderpx + (cy+1) * win.ch - 1 }           /* bottom left */
     };
     int dx = cx - lastcx, dy = cy - lastcy;
 
-    if (elapsed > cursormovetime || (abs(lastcx - cx) <=1 && abs(lastcy - cy) <= 1))
+    if (elapsed > cursormovetime || (abs(lastcx - cx) <= 1 && abs(lastcy - cy) <= 1))
         return;
 
     t = (float)elapsed / (float)cursormovetime;
