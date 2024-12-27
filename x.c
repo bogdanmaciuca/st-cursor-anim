@@ -1609,7 +1609,18 @@ xdrawcursor(int cx, int cy, Glyph g, int ox, int oy, Glyph og)
 void
 xdrawmovingcursor(int elapsed, int lastcx, int lastcy, int cx, int cy) {
     float t;
-    XPoint old[4], new[4];
+    XPoint old[4] = {
+        { borderpx + lastcx * win.cw, borderpx + lastcy * win.ch },                 /* top left */
+        { borderpx + (lastcx+1) * win.cw - 1, borderpx + lastcy * win.ch },         /* top right */
+        { borderpx + (lastcx+1) * win.cw - 1, borderpx + (lastcy+1) * win.ch - 1 }, /* bottom right */
+        { borderpx + lastcx * win.cw, borderpx + (lastcy+1) * win.ch - 1 }          /* bottom left */
+    };
+    XPoint new[4] = {
+        { borderpx + cx * win.cw, borderpx + (cy+1) * win.ch - 1 },           /* bottom left */
+        { borderpx + cx * win.cw, borderpx + cy * win.ch },                   /* top left */
+        { borderpx + (cx+1) * win.cw - 1, borderpx + cy * win.ch },           /* top right */
+        { borderpx + (cx+1) * win.cw - 1, borderpx + (cy+1) * win.ch - 1 }    /* bottom right */
+    };
     int dx = cx - lastcx, dy = cy - lastcy;
 
     if (elapsed > cursormovetime || (abs(lastcx - cx) <=1 && abs(lastcy - cy) <= 1))
@@ -1617,19 +1628,6 @@ xdrawmovingcursor(int elapsed, int lastcx, int lastcy, int cx, int cy) {
 
     t = (float)elapsed / (float)cursormovetime;
     t = sqrt(t);
-
-    old = {
-        { borderpx + lastcx * win.cw, borderpx + lastcy * win.ch },                 /* top left */
-        { borderpx + (lastcx+1) * win.cw - 1, borderpx + lastcy * win.ch },         /* top right */
-        { borderpx + (lastcx+1) * win.cw - 1, borderpx + (lastcy+1) * win.ch - 1 }, /* bottom right */
-        { borderpx + lastcx * win.cw, borderpx + (lastcy+1) * win.ch - 1 },         /* bottom left */
-    };
-    new = {
-        { borderpx + cx * win.cw, borderpx + cy * win.ch },                   /* top left */
-        { borderpx + (cx+1) * win.cw - 1, borderpx + cy * win.ch },           /* top right */
-        { borderpx + (cx+1) * win.cw - 1, borderpx + (cy+1) * win.ch - 1 },   /* bottom right */
-        { borderpx + cx * win.cw, borderpx + (cy+1) * win.ch - 1 },           /* bottom left */
-    };
 
     /* now just stretch the cursor in the right direction */
     if (dx >= 0 && dy >= 0) {

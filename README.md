@@ -1,3 +1,6 @@
+# st-cursor-anim
+Simple Terminal with Neovide-like cursor animations.
+
 This is a fork of [git://git.suckless.org/st](). It is my attempt at implementing Neovide-like cursor animations in a terminal.
 
 ## Support
