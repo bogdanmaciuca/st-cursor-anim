@@ -68,7 +68,7 @@ static unsigned int blinktimeout = 800;
 static unsigned int cursorthickness = 2;
 
 /*
- * how much time the moving cursor animation should last (0 for no animation)
+ * how much time (ms) the moving cursor animation should last (0 for no animation)
  */
 unsigned int cursormovetime = 100;
 
