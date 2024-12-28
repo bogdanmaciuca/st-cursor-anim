@@ -18,6 +18,3 @@ make           # or: "sudo make clean install" to install on your system
 ## Support
 For the time being i am pretty invested in this project and am willing to bring it to a usable and stable level. Will probably solve issues in a timely manner if my schedule allows me to do so.
 
-## TODO:
-- [ ] wait a few milliseconds before drawing (avoid situations where the cursor does fast consecutive moves)
-
