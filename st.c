@@ -131,7 +131,6 @@ typedef struct {
 	int icharset; /* selected charset for sequence */
 	int *tabs;
 	Rune lastc;   /* last printed char outside of sequence, 0 if control */
-
     struct timespec lcctime; /* last cursor change time */
 } Term;
 
@@ -2649,15 +2648,16 @@ drawregion(int x1, int y1, int x2, int y2)
 #include <time.h>
 #include <errno.h>
 
-void
+int
 draw(void)
 {
 	int cx = term.c.x, cy = term.c.y, ocx = term.ocx, ocy = term.ocy;
     Glyph og = term.line[term.ocy][term.ocx];
     static int lastcx, lastcy;
+    int anim = False;
 
 	if (!xstartdraw())
-		return;
+		return False;
 
 	/* adjust cursor position */
 	LIMIT(term.ocx, 0, term.col-1);
@@ -2682,7 +2682,7 @@ draw(void)
 
 	drawregion(0, 0, term.col, term.row);
     if (cursormovetime != 0)
-        xdrawmovingcursor(elapsed, lastcx, lastcy, cx, cy);
+        anim = xdrawmovingcursor(elapsed, lastcx, lastcy, cx, cy); /* TODO: handle more than one animation */
     xdrawcursor(cx, term.c.y, term.line[cy][cx],
             term.ocx, term.ocy, og);
 
@@ -2694,7 +2694,10 @@ draw(void)
 		xximspot(term.ocx, term.ocy);
 
     /* must redraw everything because of the animation */
-    tfulldirt();
+    if (cursormovetime != 0)
+        tfulldirt();
+
+    return anim;
 }
 
 void

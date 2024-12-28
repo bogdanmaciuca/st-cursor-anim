@@ -79,7 +79,7 @@ typedef union {
 
 void die(const char *, ...);
 void redraw(void);
-void draw(void);
+int draw(void);
 
 void printscreen(const Arg *);
 void printsel(const Arg *);

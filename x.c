@@ -1606,7 +1606,7 @@ xdrawcursor(int cx, int cy, Glyph g, int ox, int oy, Glyph og)
 	}
 }
 
-void
+int
 xdrawmovingcursor(int elapsed, int lastcx, int lastcy, int cx, int cy) {
     float t;
     XPoint old[4] = {
@@ -1619,12 +1619,12 @@ xdrawmovingcursor(int elapsed, int lastcx, int lastcy, int cx, int cy) {
         { borderpx + cx * win.cw, borderpx + cy * win.ch },                   /* top left */
         { borderpx + (cx+1) * win.cw - 1, borderpx + cy * win.ch },           /* top right */
         { borderpx + (cx+1) * win.cw - 1, borderpx + (cy+1) * win.ch - 1 },   /* bottom right */
-        { borderpx + cx * win.cw, borderpx + (cy+1) * win.ch - 1 }           /* bottom left */
+        { borderpx + cx * win.cw, borderpx + (cy+1) * win.ch - 1 }            /* bottom left */
     };
     int dx = cx - lastcx, dy = cy - lastcy;
 
     if (elapsed > cursormovetime || (abs(lastcx - cx) <= 1 && abs(lastcy - cy) <= 1))
-        return;
+        return False;
 
     t = (float)elapsed / (float)cursormovetime;
     t = sqrt(t);
@@ -1649,6 +1649,8 @@ xdrawmovingcursor(int elapsed, int lastcx, int lastcy, int cx, int cy) {
 
     XSetForeground(xw.dpy, dc.gc, WhitePixel(xw.dpy, xw.scr));
     XFillPolygon(xw.dpy, xw.buf, dc.gc, &new[0], 4, Convex, CoordModeOrigin);
+
+    return True;
 }
 
 void
@@ -1966,28 +1968,6 @@ resize(XEvent *e)
 	cresize(e->xconfigure.width, e->xconfigure.height);
 }
 
-/* msleep(): Sleep for the requested number of milliseconds. */
-int msleep(long msec)
-{
-    struct timespec ts;
-    int res;
-
-    if (msec < 0)
-    {
-        errno = EINVAL;
-        return -1;
-    }
-
-    ts.tv_sec = msec / 1000;
-    ts.tv_nsec = (msec % 1000) * 1000000;
-
-    do {
-        res = nanosleep(&ts, &ts);
-    } while (res && errno == EINTR);
-
-    return res;
-}
-
 void
 run(void)
 {
@@ -1997,6 +1977,7 @@ run(void)
 	int xfd = XConnectionNumber(xw.dpy), ttyfd, xev, drawing;
 	struct timespec seltv, *tv, now, lastblink, trigger;
 	double timeout;
+    int anim = False;
 
 	/* Waiting for window mapping */
 	do {
@@ -2027,12 +2008,16 @@ run(void)
 		if (XPending(xw.dpy))
 			timeout = 0;  /* existing events might not set xfd */
 
-		//seltv.tv_sec = timeout / 1E3;
-		//seltv.tv_nsec = 1E6 * (timeout - 1E3 * seltv.tv_sec);
-		//tv = timeout >= 0 ? &seltv : NULL;
-        seltv.tv_sec = 0;
-        seltv.tv_nsec = 5000000; // 5ms
-        tv = &seltv;
+        if (!anim) {
+            seltv.tv_sec = timeout / 1E3;
+            seltv.tv_nsec = 1E6 * (timeout - 1E3 * seltv.tv_sec);
+            tv = timeout >= 0 ? &seltv : NULL;
+        }
+        else {
+            seltv.tv_sec = 0;
+            seltv.tv_nsec = 5000000; /* 5ms */
+            tv = &seltv;
+        }
 
 		if (pselect(MAX(xfd, ttyfd)+1, &rfd, NULL, NULL, tv, NULL) < 0) {
 			if (errno == EINTR)
@@ -2091,11 +2076,9 @@ run(void)
 			}
 		}
 
-		draw();
+		anim = draw();
 		XFlush(xw.dpy);
 		drawing = 0;
-
-        msleep(10);
 	}
 }
 

@@ -27,7 +27,7 @@ void xbell(void);
 void xclipcopy(void);
 void xremoveoldcursor(int, int, Glyph);
 void xdrawcursor(int, int, Glyph, int, int, Glyph);
-void xdrawmovingcursor(int, int, int, int, int);
+int xdrawmovingcursor(int, int, int, int, int);
 void xdrawline(Line, int, int, int);
 void xfinishdraw(void);
 void xloadcols(void);
