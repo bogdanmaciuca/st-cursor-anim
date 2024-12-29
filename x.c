@@ -1611,15 +1611,15 @@ xdrawmovingcursor(int elapsed, int lastcx, int lastcy, int cx, int cy) {
     float t;
     XPoint old[4] = {
         { borderpx + lastcx * win.cw, borderpx + lastcy * win.ch },                 /* top left */
-        { borderpx + (lastcx+1) * win.cw - 1, borderpx + lastcy * win.ch },         /* top right */
-        { borderpx + (lastcx+1) * win.cw - 1, borderpx + (lastcy+1) * win.ch - 1 }, /* bottom right */
-        { borderpx + lastcx * win.cw, borderpx + (lastcy+1) * win.ch - 1 }          /* bottom left */
+        { borderpx + (lastcx+1) * win.cw, borderpx + lastcy * win.ch },         /* top right */
+        { borderpx + (lastcx+1) * win.cw, borderpx + (lastcy+1) * win.ch }, /* bottom right */
+        { borderpx + lastcx * win.cw, borderpx + (lastcy+1) * win.ch }          /* bottom left */
     };
     XPoint new[4] = {
         { borderpx + cx * win.cw, borderpx + cy * win.ch },                   /* top left */
-        { borderpx + (cx+1) * win.cw - 1, borderpx + cy * win.ch },           /* top right */
-        { borderpx + (cx+1) * win.cw - 1, borderpx + (cy+1) * win.ch - 1 },   /* bottom right */
-        { borderpx + cx * win.cw, borderpx + (cy+1) * win.ch - 1 }            /* bottom left */
+        { borderpx + (cx+1) * win.cw, borderpx + cy * win.ch },           /* top right */
+        { borderpx + (cx+1) * win.cw, borderpx + (cy+1) * win.ch },   /* bottom right */
+        { borderpx + cx * win.cw, borderpx + (cy+1) * win.ch }            /* bottom left */
     };
     int dx = cx - lastcx, dy = cy - lastcy;
 
