@@ -1623,28 +1623,37 @@ xdrawmovingcursor(int elapsed, int lastcx, int lastcy, int cx, int cy) {
     };
     int dx = cx - lastcx, dy = cy - lastcy;
 
-    if (elapsed > cursormovetime || (abs(lastcx - cx) <= 1 && abs(lastcy - cy) <= 1))
+    if (elapsed > cursormovetime || (abs(lastcx - cx) <= 1 && (lastcy - cy) == 0))
         return False;
 
     t = (float)elapsed / (float)cursormovetime;
     t = sqrt(t);
 
-    /* now just stretch the cursor in the right direction */
-    if (dx >= 0 && dy >= 0) {
-        new[3].x = (1 - t) * old[3].x + t * new[3].x;
-        new[3].y = (1 - t) * old[3].y + t * new[3].y;
-    }
-    if (dx <= 0 && dy >= 0) {
-        new[2].x = (1 - t) * old[2].x + t * new[2].x;
-        new[2].y = (1 - t) * old[2].y + t * new[2].y;
-    }
-    if (dx <= 0 && dy <= 0) {
-        new[1].x = (1 - t) * old[1].x + t * new[1].x;
-        new[1].y = (1 - t) * old[1].y + t * new[1].y;
-    }
-    if (dx >= 0 && dy <= 0) {
-        new[0].x = (1 - t) * old[0].x + t * new[0].x;
-        new[0].y = (1 - t) * old[0].y + t * new[0].y;
+    typedef struct MovePoints {
+        signed char a[3];
+    } MovePoints;
+    MovePoints movepoints = { -1, -1, -1 };
+
+    if (dx > 0 && dy < 0)
+        movepoints = (MovePoints){ 3, -1, -1 };
+    else if (dx < 0 && dy < 0)
+        movepoints = (MovePoints){ 2, -1, -1 };
+    else if (dx < 0 && dy > 0)
+        movepoints = (MovePoints){ 1, -1, -1 };
+    else if (dx > 0 && dy > 0)
+        movepoints = (MovePoints){ 0, -1, -1 };
+    else if (dy == 0 && dx > 0)
+        movepoints = (MovePoints){ 0, 3, -1 };
+    else if (dy == 0 && dx < 0)
+        movepoints = (MovePoints){ 1, 2, -1 };
+    else if (dx == 0 && dy < 0)
+        movepoints = (MovePoints){ 2, 3, -1 };
+    else if (dx == 0 && dy > 0)
+        movepoints = (MovePoints){ 0, 1, -1 };
+
+    for (int i = 0; movepoints.a[i] != -1; i++) {
+        new[movepoints.a[i]].x = t * new[movepoints.a[i]].x + (1 - t) * old[movepoints.a[i]].x;
+        new[movepoints.a[i]].y = t * new[movepoints.a[i]].y + (1 - t) * old[movepoints.a[i]].y;
     }
 
     XSetForeground(xw.dpy, dc.gc, WhitePixel(xw.dpy, xw.scr));
@@ -2015,7 +2024,7 @@ run(void)
         }
         else {
             seltv.tv_sec = 0;
-            seltv.tv_nsec = 10000000; /* 10ms */
+            seltv.tv_nsec = 1000000; /* 1ms */
             tv = &seltv;
         }
 
