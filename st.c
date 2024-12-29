@@ -2693,9 +2693,16 @@ draw(void)
 	if (ocx != term.ocx || ocy != term.ocy)
 		xximspot(term.ocx, term.ocy);
 
-    /* must redraw everything because of the animation */
-    if (anim)
-        tfulldirt();
+    /* must redraw the lines that might have been affected by the animation */
+    if (anim) {
+        int top = lastcy, bottom = cy;
+        if (top > bottom) {
+            top ^= bottom;
+            bottom ^= top;
+            top ^= bottom;
+        }
+        tsetdirt(top, bottom);
+    }
 
     return anim;
 }
