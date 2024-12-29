@@ -2015,7 +2015,7 @@ run(void)
         }
         else {
             seltv.tv_sec = 0;
-            seltv.tv_nsec = 5000000; /* 5ms */
+            seltv.tv_nsec = 10000000; /* 10ms */
             tv = &seltv;
         }
 

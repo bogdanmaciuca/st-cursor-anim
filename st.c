@@ -2694,7 +2694,7 @@ draw(void)
 		xximspot(term.ocx, term.ocy);
 
     /* must redraw everything because of the animation */
-    if (cursormovetime != 0)
+    if (anim)
         tfulldirt();
 
     return anim;
