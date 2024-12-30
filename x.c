@@ -1656,7 +1656,7 @@ xdrawmovingcursor(int elapsed, int lastcx, int lastcy, int cx, int cy) {
         new[movepoints.a[i]].y = t * new[movepoints.a[i]].y + (1 - t) * old[movepoints.a[i]].y;
     }
 
-    XSetForeground(xw.dpy, dc.gc, WhitePixel(xw.dpy, xw.scr));
+    XSetForeground(xw.dpy, dc.gc, cursortrailcolor);
     XFillPolygon(xw.dpy, xw.buf, dc.gc, &new[0], 4, Convex, CoordModeOrigin);
 
     return True;

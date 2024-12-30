@@ -74,6 +74,11 @@ static unsigned int cursorthickness = 2;
 unsigned int cursormovetime = 100;
 
 /*
+ * the color of the trail left behind the cursor when moving
+ */
+unsigned int cursortrailcolor = 0xffffffff;
+
+/*
  * bell volume. It must be a value between -100 and 100. Use 0 for disabling
  * it
  */

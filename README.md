@@ -17,8 +17,9 @@ cd st-cursor-anim
 make           # or: "sudo make clean install" to install on your system
 ```
 
-## Configuration
-`cursormovetime` in `config.h`: time (in ms) of the cursor animation
+## Configuration (`config.h`)
+- `cursormovetime`: time (in ms) of the cursor animation
+- `cursortrailcolor`: color of the animation (trail left behind the cursor when moving)
 
 ## Support
 For the time being i am pretty invested in this project and am willing to bring it to a usable and stable level. Will probably solve issues in a timely manner if my schedule allows me to do so.
